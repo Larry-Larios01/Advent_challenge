@@ -60,11 +60,14 @@ def get_list_of_source(source: str) -> list[str]:
 
 
 
-def iter_the_individual_list(list: list[str]) -> int:
+def iter_the_individual_list(source: str) -> int:
     acumulate = 0
     response_of_checker: bool
-    for li in list:
-        response_of_checker = check_list(li)
+    text_strip = source.strip().split("\n")
+    for item in text_strip:
+        splitted = item.split()
+        print(splitted)
+        response_of_checker = check_list(splitted, lenght= len(splitted))
         if response_of_checker:
             acumulate += 1
 
@@ -73,21 +76,22 @@ def iter_the_individual_list(list: list[str]) -> int:
     return acumulate
 
 
-def check_list(list:list[str], safe:bool = False, acc: int = -1):
+def check_list(list:list[str], safe:bool = False, acc: int = -1, lenght = 0):
     if acc == -1:
         ll = fill_the_linked_list(list)
         safe = is_safe(ll)
     if acc != -1:
-        del list[acc]
-        ll = fill_the_linked_list(list)
+        temp_list = list[:]
+        del temp_list[acc]
+        ll = fill_the_linked_list(temp_list)
         safe = is_safe(ll)
 
 
 
-    if safe == True or len(list) == 0:
+    if safe == True or len(list) == acc+1:
         return safe
     
-    return(list, safe, acc+1)
+    return check_list(list, safe, acc+1)
     
 
 def fill_the_linked_list( list: list[str])-> LinkedList:
@@ -154,8 +158,16 @@ def is_safe(ll: LinkedList):
 
 if __name__ == "__main__":
     source = get_source()
-    list_of_source = get_list_of_source(source)
-    results = iter_the_individual_list(list_of_source) 
+    #list_of_source = get_list_of_source(source)
+    response2 = """
+1 2 7 8 9
+7 6 4 2 1
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9 
+"""   
+    results = iter_the_individual_list(source) 
     print("teh results are", results)
 
 
@@ -169,14 +181,7 @@ if __name__ == "__main__":
 
 
 
-response2 = """
-7 6 4 2 1
-1 2 7 8 9
-9 7 6 2 1
-1 3 2 4 5
-8 6 4 4 1
-1 3 6 7 9
-"""    
+ 
 
 
 
