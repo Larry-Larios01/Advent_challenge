@@ -35,50 +35,75 @@ class LinkedList:
 
 
 
-# URL de la página
-url = "https://adventofcode.com/2024/day/2/input"
+def get_source() -> str:
+    # URL de la página
+    url = "https://adventofcode.com/2024/day/2/input"
 
-# Realizar solicitud HTTP
+    # Realizar solicitud HTTP
 
-session = os.getenv("SESSION")
-cookies = {'session': session}
+    session = os.getenv("SESSION")
+    cookies = {'session': session}
 
-#response = requests.get(url, cookies=cookies)
+    response = requests.get(url, cookies=cookies)
+    return response.text
 
 
-response = """
-7 6 4 2 1
-1 2 7 8 9
-9 7 6 2 1
-1 3 2 4 5
-8 6 4 4 1
-1 3 6 7 9
-"""
-#print(response.text)
+def get_list_of_source(source: str) -> list[str]:
+    text_strip = source.strip().split("\n")
+    for item in text_strip:
+        splitted = item.split()
+        print(splitted)
 
-def dampener_checker(link: LinkedList):
-    return True
+    return splitted
+        
 
 
 
-text_strip = response.strip().split("\n")
-print(text_strip)
 
-ok_reports = 0
-for item in text_strip:
-    splitted = item.split()
-    print(splitted)
-    ll = LinkedList()
+def iter_the_individual_list(list: list[str]) -> int:
+    acumulate = 0
+    response_of_checker: bool
+    for li in list:
+        response_of_checker = check_list(li)
+        if response_of_checker:
+            acumulate += 1
 
-    for split in splitted:
-        ll.insert_at_end(split)
 
-   
 
+    return acumulate
+
+
+def check_list(list:list[str], safe:bool = False, acc: int = -1):
+    if acc == -1:
+        ll = fill_the_linked_list(list)
+        safe = is_safe(ll)
+    if acc != -1:
+        del list[acc]
+        ll = fill_the_linked_list(list)
+        safe = is_safe(ll)
+
+
+
+    if safe == True or len(list) == 0:
+        return safe
+    
+    return(list, safe, acc+1)
+    
+
+def fill_the_linked_list( list: list[str])-> LinkedList:
+        ll = LinkedList()
+        for split in list:
+            ll.insert_at_end(split)
+
+        return ll
+
+
+
+
+    
+def is_safe(ll: LinkedList):
     current = ll.head
-    is_safe = True
     incre_decre = ""
-    problem_dampener = 0
     while current: 
         next_node = ll.find_next_node(current)
 
@@ -87,10 +112,9 @@ for item in text_strip:
             result = abs(current.data-next_node.data)
             if current.data> next_node.data:
                 if incre_decre == "i":
-                    dampener = dampener_checker(ll)
             
-                    is_safe = False
-                    break
+                    return False
+                    
                     
                 elif incre_decre is not "i":
                     incre_decre = "d"
@@ -98,33 +122,61 @@ for item in text_strip:
             if current.data < next_node.data:
                 if incre_decre == "d":
 
-                    is_safe = False
-                    break
+                    return False
+                    
                     
                 elif incre_decre is not "d":
                     incre_decre = "i"
             if result < 1 or result>3:
-                    is_safe = False
-                    break
+                    return False
+                    
                 
             current = current.next
             print("the current", current.data)
         if not next_node:
-            current =  current.next
+            return True
         
 
-    if is_safe:
-        ok_reports += 1
-
-
-print(ok_reports)
 
 
 
+
+
+
+
+   
+
+    
+
+
+
+
+
+if __name__ == "__main__":
+    source = get_source()
+    list_of_source = get_list_of_source(source)
+    results = iter_the_individual_list(list_of_source) 
+    print("teh results are", results)
 
 
     
+
     
+
+
+
+
+
+
+
+response2 = """
+7 6 4 2 1
+1 2 7 8 9
+9 7 6 2 1
+1 3 2 4 5
+8 6 4 4 1
+1 3 6 7 9
+"""    
 
 
 
